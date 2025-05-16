@@ -1,93 +1,132 @@
-PrizeClaim DApp
+# PrizeClaim DApp
 
-A blockchain-based prize distribution platform featuring wallet connection, passkey (WebAuthn) verification, and interactive prize claiming with real-time blockchain transactions.
+A fully functional decentralized prize claiming application built for the Stellar Hackathon.
+The platform allows users to connect their wallets, verify their identity using Passkeys (fingerprint/FaceID), and participate in blockchain-backed prize claims through a gamified prize wheel.
 
-⸻
+---
 
-Technologies Used
+## 💻 Tech Stack
 
-Frontend Framework: Next.js (React, TypeScript)
+**Programming Languages:**
+- TypeScript
+- JavaScript (ES6+)
 
-Styling: Tailwind CSS
+**Frontend Frameworks & Libraries:**
+- Next.js (React 18 with App Router)
+- Tailwind CSS for styling
+- Framer Motion for animations
+- React Hot Toast for notifications
 
-State Management: React Context API
+**Web Authentication:**
+- WebAuthn API for Passkey (Fingerprint/FaceID) support
 
-Animation: Framer Motion
+**Blockchain Integration:**
+- Stellar SDK for wallet interactions and prize transactions
 
-Notifications: React Hot Toast
+---
 
-Blockchain Integration: Stellar SDK (Stellar Network)
+## 📦 Dependencies
 
-Authentication API: WebAuthn (W3C Standard)
+**dependencies**:
+- next: 13.x
+- react: 18.x
+- react-dom: 18.x
+- tailwindcss: ^3.x
+- framer-motion: ^10.x
+- react-hot-toast: ^2.x
+- @stellar-sdk: ^10.x
 
-Browser APIs: LocalStorage, Navigator.credentials
+---
 
-Package Manager: Yarn / npm
+## ⚙️ Setup Instructions
 
-⸻
+1. Clone the Repository
+```bash
+git clone https://github.com/your-org/prize-claim-dapp.git
+cd prize-claim-dapp
+```
 
-Features
-	•	Connect Wallet (Simulated or Stellar Integration)
-	•	Passkey (Fingerprint/FaceID) Registration & Verification using WebAuthn API
-	•	Daily Spin Limits with Reset Logic
-	•	Interactive Prize Wheel with Token and NFT Prizes
-	•	Blockchain Transaction Execution on Prize Win
-	•	Transaction History and Activity Logs
-	•	User Profile with Username, Balance, and NFTs
-	•	Fully Responsive and Accessible UI
-	•	Persistent Session Storage using Local Storage
-
-⸻
-
-Installation Steps
-	1.	Clone the Repository
-git clone https://github.com/yourusername/prizeclaim-dapp.git
-cd prizeclaim-dapp
-	2.	Install Dependencies
+2. Install Dependencies
+```bash
 npm install
-or
-yarn install
-	3.	Run Locally
+```
+
+3. Run the Development Server
+```bash
 npm run dev
-or
-yarn dev
-	4.	Open your browser and visit
-http://localhost:3000
+```
 
-⸻
+4. Visit [http://localhost:3000](http://localhost:3000)
 
-How Passkey (WebAuthn) Works
+5. Optional:  
+If using Passkey (WebAuthn) on Chrome or Safari, ensure you’re using localhost with HTTPS or a trusted domain.
 
-Registration:
-Uses navigator.credentials.create() with platform authenticator and required user verification. This allows biometric authentication such as Touch ID or Face ID on supported devices.
+---
 
-Verification:
-Uses navigator.credentials.get() to validate the user’s identity based on the previously registered passkey.
+## 🚀 Features
 
-Persistent Wallet Linking:
-Associates and stores wallet addresses with the verified passkey in local storage for retrieval in future sessions.
+- **Wallet Connection**: Simulated wallet connection with local wallet storage. Future-ready for real Stellar wallet integration.
+- **Passkey Authentication**: Register and verify users via fingerprint or FaceID. Stores verified wallet addresses for future sessions.
+- **Prize Wheel Game**: Interactive, animated prize wheel with blockchain-backed prizes. Token and NFT rewards sent via Stellar blockchain.
+- **Transaction Logging**: Recent prize transactions displayed to the user. Activity log for transparency.
+- **User Dashboard**: Displays wallet address, token balance, and claimed NFTs.
 
-⸻
+---
 
-Planned Enhancements
-	•	Full Stellar Smart Contract Integration
-	•	Multi-User Wallet Management
-	•	Mobile Responsiveness Improvements
-	•	Cloud-Based Credential Storage
-	•	Production Deployment
+## 🎮 Usage
 
-⸻
+1. Connect your simulated wallet by pressing “Connect Wallet”.
+2. Register your identity using “Passkey Authentication” (Fingerprint/FaceID).
+3. Spin the “Prize Wheel” to win tokens or NFTs.
+4. View your claimed prizes and recent transactions in your profile.
 
-Contributors
+---
 
-Lead Developer: Your Name (GitHub: https://github.com/yourusername)
+## 🗂️ Project Structure
 
-Hackathon Team: ZeroFriction Wallet
+```
+/components
+  ├── WalletConnector.tsx
+  ├── PasskeyAuth.tsx
+  ├── PrizeWheel.tsx
+  └── GameCard.tsx
 
-⸻
+/context
+  └── AppContext.tsx
 
-License
+/pages
+  └── index.tsx
 
-This project is licensed under the MIT License.
+/utils
+  ├── localStorage.ts
+  ├── stellarService.ts
+  └── aptos.ts
 
-⸻
+/public
+  ├── images
+  └── styles
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to improve the PrizeClaim DApp.  
+Please fork the repository, make your changes, and submit a pull request.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
+
+---
+
+## 📝 Contact
+
+For any questions or feedback, please contact the development team via GitHub Issues or Discussions. @harwinderjitsingh @mankirat14
