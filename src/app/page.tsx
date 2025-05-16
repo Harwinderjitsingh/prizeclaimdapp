@@ -73,6 +73,23 @@ export default function Home() {
                 Connect your Stellar wallet to start playing and claiming prizes.
               </p>
               <WalletConnector />
+              {user && isVerifiedWithPasskey && (
+                <div className="mt-4 text-center">
+                  <Input
+                    type="text"
+                    placeholder="Enter the Stellar wallet address"
+                    value={recipientAddress}
+                    onChange={(e) => setRecipientAddress(e.target.value)}
+                    className="mb-4"
+                  />
+                  <button
+                    onClick={handleSendPrize}
+                    className="bg-green-600 px-4 py-2 text-white rounded"
+                  >
+                    Send Test Prize
+                  </button>
+                </div>
+              )}
               <div className="mb-8 text-center">
                 <PasskeyAuth />
               </div>
@@ -158,23 +175,6 @@ export default function Home() {
           {!isVerifiedWithPasskey && user && (
             <div className="mt-8 text-center text-red-500">
               <p>Please verify with Passkey before claiming prizes.</p>
-            </div>
-          )}
-          {user && isVerifiedWithPasskey && (
-            <div className="mt-8 text-center">
-              <Input
-                type="text"
-                placeholder="Enter the Stellar wallet address"
-                value={recipientAddress}
-                onChange={(e) => setRecipientAddress(e.target.value)}
-                className="mb-4"
-              />
-              <button
-                  onClick={handleSendPrize}
-                  className="bg-green-600 px-4 py-2 text-white rounded"
-              >
-                Send Test Prize
-              </button>
             </div>
           )}
 

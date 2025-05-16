@@ -15,6 +15,13 @@ export default function PasskeyAuth() {
     }
 
     setAuthStatus('authenticating');
+    const manualWalletAddress = prompt("Enter the wallet address to associate with this passkey:");
+    if (!manualWalletAddress) {
+      alert("Wallet address is required to register passkey.");
+      setAuthStatus('failed');
+      return;
+    }
+
     try {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
@@ -25,6 +32,11 @@ export default function PasskeyAuth() {
           displayName: user.username,
         },
         pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "required",
+        },
+        attestation: "none",
       };
 
       const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
@@ -33,6 +45,12 @@ export default function PasskeyAuth() {
         setIsVerifiedWithPasskey(true);
         localStorage.setItem('passkeyAuthenticated', 'true');
         localStorage.setItem('passkeyCredentialId', (credential as PublicKeyCredential).id);
+        // Save associated wallet address
+        const existingWallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
+        if (!existingWallets.includes(manualWalletAddress)) {
+          existingWallets.push(manualWalletAddress);
+          localStorage.setItem('passkeyWalletAddresses', JSON.stringify(existingWallets));
+        }
       }
     } catch (error) {
       console.error(error);
@@ -60,12 +78,20 @@ export default function PasskeyAuth() {
       const publicKeyCredentialRequestOptions = {
         challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
         allowCredentials: [{ id: Uint8Array.from(credentialId, c => c.charCodeAt(0)), type: "public-key" }],
+        userVerification: "required",
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "required",
+        },
       };
 
       const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
       if (assertion) {
         setAuthStatus('authenticated');
         setIsVerifiedWithPasskey(true);
+        // Retrieve and log associated wallet addresses
+        const associatedWallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
+        console.log('Associated Wallets:', associatedWallets);
       }
     } catch (error) {
       console.error(error);

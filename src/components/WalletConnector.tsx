@@ -7,14 +7,21 @@ export default function WalletConnector() {
   const { login, logout, user } = useAppContext();
   const [isConnecting, setIsConnecting] = useState(false);
   const [connected, setConnected] = useState<boolean>(!!user);
-  const [address, setAddress] = useState<string | null>(null);
+  const [address, setAddress] = useState<string | null>(user?.walletAddress || null);
 
   const generateRandomAddress = () => {
+    const storedAddresses = JSON.parse(localStorage.getItem('storedWalletAddresses') || '[]');
+    if (storedAddresses.length > 0) {
+      const lastUsedAddress = storedAddresses[storedAddresses.length - 1];
+      return lastUsedAddress;
+    }
     const chars = '0123456789abcdef';
     let addr = '0x';
     for (let i = 0; i < 40; i++) {
       addr += chars[Math.floor(Math.random() * chars.length)];
     }
+    const updatedAddresses = [...storedAddresses, addr];
+    localStorage.setItem('storedWalletAddresses', JSON.stringify(updatedAddresses));
     return addr;
   };
 

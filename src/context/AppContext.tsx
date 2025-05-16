@@ -22,6 +22,8 @@ interface AppContextType {
   resetSpinCount: () => void;
   isVerifiedWithPasskey: boolean;
   setIsVerifiedWithPasskey: (verified: boolean) => void;
+  savedWallets: string[];
+  addSavedWallet: (address: string) => void;
 }
 
 // Create the context with default values
@@ -46,6 +48,15 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [spinCount, setSpinCount] = useState<number>(3);
   const [isVerifiedWithPasskey, setIsVerifiedWithPasskey] = useState(false);
+  const [savedWallets, setSavedWallets] = useState<string[]>([]);
+
+  // Load savedWallets from localStorage on mount (to avoid SSR issues)
+  useEffect(() => {
+    const stored = localStorage.getItem('savedWallets');
+    if (stored) {
+      setSavedWallets(JSON.parse(stored));
+    }
+  }, []);
 
   // Load user data from localStorage on component mount
   useEffect(() => {
@@ -74,6 +85,10 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem('prizeDappSpinCount', spinCount.toString());
   }, [spinCount]);
+
+  useEffect(() => {
+    localStorage.setItem('savedWallets', JSON.stringify(savedWallets));
+  }, [savedWallets]);
 
   // Login function
   const login = (address: string) => {
@@ -121,6 +136,13 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
     setSpinCount(3);
   };
 
+  // Add saved wallet
+  const addSavedWallet = (address: string) => {
+    if (!savedWallets.includes(address)) {
+      setSavedWallets([...savedWallets, address]);
+    }
+  };
+
   return (
     <AppContext.Provider value={{
       user,
@@ -133,6 +155,8 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
       resetSpinCount,
       isVerifiedWithPasskey,
       setIsVerifiedWithPasskey,
+      savedWallets,
+      addSavedWallet,
     }}>
       {children}
     </AppContext.Provider>
