@@ -4,7 +4,7 @@ const SPIN_COUNT_KEY = 'prizeDappSpinCount';
 const LAST_RESET_KEY = 'prizeDappLastReset';
 
 // Save user data to localStorage
-export const saveUser = (userData: any) => {
+export const saveUser = (userData: Record<string, any>) => {
   try {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
     return true;
@@ -15,7 +15,7 @@ export const saveUser = (userData: any) => {
 };
 
 // Get user data from localStorage
-export const getUser = () => {
+export const getUser = (): Record<string, any> | null => {
   try {
     const userData = localStorage.getItem(USER_KEY);
     return userData ? JSON.parse(userData) : null;
@@ -26,7 +26,7 @@ export const getUser = () => {
 };
 
 // Remove user data from localStorage
-export const removeUser = () => {
+export const removeUser = (): boolean => {
   try {
     localStorage.removeItem(USER_KEY);
     return true;
@@ -37,7 +37,7 @@ export const removeUser = () => {
 };
 
 // Save spin count to localStorage
-export const saveSpinCount = (count: number) => {
+export const saveSpinCount = (count: number): boolean => {
   try {
     localStorage.setItem(SPIN_COUNT_KEY, count.toString());
     return true;
@@ -59,7 +59,7 @@ export const getSpinCount = (): number => {
 };
 
 // Check if spins should be reset (once per day)
-export const checkAndResetSpins = () => {
+export const checkAndResetSpins = (): boolean => {
   try {
     const now = new Date();
     const today = now.toDateString();

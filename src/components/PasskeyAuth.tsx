@@ -38,6 +38,7 @@ export default function PasskeyAuth() {
       console.error(error);
       setAuthStatus('failed');
       setIsVerifiedWithPasskey(false);
+      alert("Passkey verification failed. Please try again.");
     }
   };
 
@@ -114,11 +115,7 @@ export default function PasskeyAuth() {
           )}
         </>
       )}
-      {!user && (
-        <div className="text-center text-gray-500 text-sm">
-          Connect your wallet to use passkey authentication
-        </div>
-      )}
+
     </div>
   );
 }

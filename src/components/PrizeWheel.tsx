@@ -249,8 +249,11 @@ export default function PrizeWheel({ onPrizeWin }: { onPrizeWin?: (walletAddress
       {/* Transaction history */}
       {transactions.length > 0 && (
         <div className="w-full mt-6">
-          <h3 className="text-lg font-semibold mb-2">Recent Transactions</h3>
-          <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg max-h-40 overflow-y-auto">
+          <h3 className="text-lg font-semibold mb-2">📝 Transaction Activity Log</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            Below is a record of your recent prize claims and blockchain transactions.
+          </p>
+          <div className="bg-white dark:bg-gray-900 p-3 rounded-lg max-h-40 overflow-y-auto">
             {transactions.map((tx, index) => (
               <div key={index} className="text-xs border-b border-gray-200 dark:border-gray-700 py-2">
                 <div className="flex justify-between">

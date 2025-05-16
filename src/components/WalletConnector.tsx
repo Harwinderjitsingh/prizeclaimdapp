@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 export default function WalletConnector() {
   const { login, logout, user } = useAppContext();
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connected, setConnected] = useState(!!user);
+  const [connected, setConnected] = useState<boolean>(!!user);
   const [address, setAddress] = useState<string | null>(null);
 
   const generateRandomAddress = () => {
@@ -49,22 +49,22 @@ export default function WalletConnector() {
         disabled={isConnecting}
         className={`px-6 py-2 rounded-lg font-medium transition-colors ${
           connected 
-            ? 'bg-red-500 hover:bg-red-600 text-white' 
-            : 'bg-purple-600 hover:bg-purple-700 text-white'
+            ? 'bg-red-600 hover:bg-red-700 text-white' 
+            : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:brightness-110 text-white'
         } ${isConnecting ? 'opacity-70 cursor-not-allowed' : ''}`}
       >
-        {isConnecting 
-          ? 'Connecting...' 
-          : connected 
-            ? 'Disconnect Wallet' 
+        {isConnecting
+          ? 'Connecting...'
+          : connected
+            ? 'Disconnect Wallet'
             : 'Connect Wallet'
         }
       </button>
-      
+
       {connected && address && (
         <div className="text-center">
           <p className="text-sm font-medium">Connected as:</p>
-          <p className="text-xs font-mono bg-gray-100 p-2 rounded mt-1 dark:bg-gray-800">
+          <p className="text-xs font-mono bg-gray-100 p-2 rounded mt-1 dark:bg-gray-700 dark:text-white">
             {address.substring(0, 6)}...
             {address.substring(address.length - 4)}
           </p>
