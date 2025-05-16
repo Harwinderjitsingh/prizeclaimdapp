@@ -11,7 +11,7 @@ import { sendPrizeTransaction } from '@/lib/stellarService';
 import { Input } from '@/components/ui/Input';
 
 export default function Home() {
-  const { user, spinCount } = useAppContext();
+  const { user, spinCount, isVerifiedWithPasskey } = useAppContext();
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [showGameCards, setShowGameCards] = useState(true);
   const [transactionHistory, setTransactionHistory] = useState<{ amount: string; hash: string; timestamp: string }[]>([]);
@@ -51,9 +51,6 @@ export default function Home() {
   return (
       <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
         <div className="max-w-4xl w-full">
-          <div className="mb-8 text-center">
-            <PasskeyAuth />
-          </div>
           <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
               Prize Claim With Wallet
@@ -70,6 +67,14 @@ export default function Home() {
                 Connect your Aptos wallet to start playing and claiming prizes.
               </p>
               <WalletConnector />
+              <div className="mb-8 text-center">
+                <PasskeyAuth />
+              </div>
+              <div className="text-sm mt-2">
+                <p>Status:</p>
+                <p>Wallet: {user ? '✅ Connected' : '❌ Not Connected'}</p>
+                <p>Passkey: {isVerifiedWithPasskey ? '✅ Verified' : '❌ Not Verified'}</p>
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -144,21 +149,28 @@ export default function Home() {
             )}
           </div>
 
-          <div className="mt-8 text-center">
-            <Input
-              type="text"
-              placeholder="Enter the Stellar wallet address"
-              value={recipientAddress}
-              onChange={(e) => setRecipientAddress(e.target.value)}
-              className="mb-4"
-            />
-            <button
-                onClick={handleSendPrize}
-                className="bg-green-600 px-4 py-2 text-white rounded"
-            >
-              Send Test Prize
-            </button>
-          </div>
+          {!isVerifiedWithPasskey && user && (
+            <div className="mt-8 text-center text-red-500">
+              <p>Please verify with Passkey before claiming prizes.</p>
+            </div>
+          )}
+          {user && isVerifiedWithPasskey && (
+            <div className="mt-8 text-center">
+              <Input
+                type="text"
+                placeholder="Enter the Stellar wallet address"
+                value={recipientAddress}
+                onChange={(e) => setRecipientAddress(e.target.value)}
+                className="mb-4"
+              />
+              <button
+                  onClick={handleSendPrize}
+                  className="bg-green-600 px-4 py-2 text-white rounded"
+              >
+                Send Test Prize
+              </button>
+            </div>
+          )}
 
           {transactionHistory.length > 0 && (
             <div className="mt-8 text-center">

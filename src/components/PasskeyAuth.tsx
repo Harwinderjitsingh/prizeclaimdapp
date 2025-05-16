@@ -14,6 +14,7 @@ export default function PasskeyAuth() {
       return;
     }
 
+    setAuthStatus('authenticating');
     try {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
@@ -47,6 +48,7 @@ export default function PasskeyAuth() {
       return;
     }
 
+    setAuthStatus('authenticating');
     try {
       const credentialId = localStorage.getItem('passkeyCredentialId');
       if (!credentialId) {

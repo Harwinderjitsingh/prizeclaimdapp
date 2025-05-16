@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAppContext } from '@/context/AppContext';
 import { generateMockTxData } from '@/utils/aptos';
 import { toast } from 'react-hot-toast';
+import { sendPrizeTransaction } from '@/lib/stellarService';
 
 // Prize definitions
 const prizes = [
@@ -84,6 +85,14 @@ export default function PrizeWheel({ onPrizeWin }: { onPrizeWin?: (walletAddress
       addTokens(amount);
       toast.success(`You won ${amount} tokens!`);
       if (onPrizeWin && user) {
+        sendPrizeTransaction(user.walletAddress, amount.toString())
+          .then(() => {
+            alert(`🎉 You won ${amount} tokens and they have been sent to your wallet!`);
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Failed to send tokens.");
+          });
         onPrizeWin(user.walletAddress);
       }
     }
@@ -96,6 +105,14 @@ export default function PrizeWheel({ onPrizeWin }: { onPrizeWin?: (walletAddress
         setTransactions(prev => [txData, ...prev]);
         toast.success(`You won a ${prize.name}!`);
         if (onPrizeWin) {
+          sendPrizeTransaction(user.walletAddress, "1")
+            .then(() => {
+              alert(`🎉 You won a ${prize.name} and it has been sent to your wallet!`);
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("Failed to send NFT.");
+            });
           onPrizeWin(user.walletAddress);
         }
       }
@@ -110,6 +127,14 @@ export default function PrizeWheel({ onPrizeWin }: { onPrizeWin?: (walletAddress
         setTransactions(prev => [txData, ...prev]);
         toast.success('🎉 JACKPOT! You won 100 tokens!');
         if (onPrizeWin) {
+          sendPrizeTransaction(user.walletAddress, "100")
+            .then(() => {
+              alert("🎉 JACKPOT! 100 tokens have been sent to your wallet!");
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("Failed to send jackpot tokens.");
+            });
           onPrizeWin(user.walletAddress);
         }
       }

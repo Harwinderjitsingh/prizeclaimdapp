@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 export default function WalletConnector() {
   const { login, logout, user } = useAppContext();
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(!!user);
   const [address, setAddress] = useState<string | null>(null);
 
   const generateRandomAddress = () => {
