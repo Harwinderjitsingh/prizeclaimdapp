@@ -7,7 +7,7 @@ export default function PasskeyAuth() {
   const [authStatus, setAuthStatus] = useState<'idle' | 'authenticating' | 'authenticated' | 'failed'>('idle');
   const { user, isVerifiedWithPasskey, setIsVerifiedWithPasskey } = useAppContext();
 
-  // Handles Passkey Registration
+  // Register Passkey with Wallet Association
   const registerPasskey = async () => {
     if (!user) {
       alert("Please connect your wallet first");
@@ -15,13 +15,6 @@ export default function PasskeyAuth() {
     }
 
     setAuthStatus('authenticating');
-    const manualWalletAddress = prompt("Enter the wallet address to associate with this passkey:");
-    if (!manualWalletAddress) {
-      alert("Wallet address is required to register passkey.");
-      setAuthStatus('failed');
-      return;
-    }
-
     try {
       const publicKeyCredentialCreationOptions = {
         challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
@@ -45,22 +38,23 @@ export default function PasskeyAuth() {
         setIsVerifiedWithPasskey(true);
         localStorage.setItem('passkeyAuthenticated', 'true');
         localStorage.setItem('passkeyCredentialId', (credential as PublicKeyCredential).id);
-        // Save associated wallet address
-        const existingWallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
-        if (!existingWallets.includes(manualWalletAddress)) {
-          existingWallets.push(manualWalletAddress);
-          localStorage.setItem('passkeyWalletAddresses', JSON.stringify(existingWallets));
+
+        // Store associated wallet
+        const wallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
+        if (!wallets.includes(user.walletAddress)) {
+          wallets.push(user.walletAddress);
+          localStorage.setItem('passkeyWalletAddresses', JSON.stringify(wallets));
         }
       }
     } catch (error) {
       console.error(error);
       setAuthStatus('failed');
       setIsVerifiedWithPasskey(false);
-      alert("Passkey verification failed. Please try again.");
+      alert("Passkey registration failed. Please try again.");
     }
   };
 
-  // Handles Passkey Verification
+  // Verify Passkey and List Associated Wallets
   const verifyPasskey = async () => {
     if (!user) {
       alert("Please connect your wallet first");
@@ -89,18 +83,19 @@ export default function PasskeyAuth() {
       if (assertion) {
         setAuthStatus('authenticated');
         setIsVerifiedWithPasskey(true);
-        // Retrieve and log associated wallet addresses
-        const associatedWallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
-        console.log('Associated Wallets:', associatedWallets);
+
+        const wallets = JSON.parse(localStorage.getItem('passkeyWalletAddresses') || '[]');
+        console.log('Associated Wallets:', wallets);
       }
     } catch (error) {
       console.error(error);
       setAuthStatus('failed');
       setIsVerifiedWithPasskey(false);
+      alert("Passkey verification failed. Please try again.");
     }
   };
 
-  // Load authentication status from localStorage
+  // Sync Authentication Status on Load
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('passkeyAuthenticated') === 'true';
     if (user) {
@@ -110,38 +105,37 @@ export default function PasskeyAuth() {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      {user && (
-        <>
-          <div className="flex flex-col items-center space-y-2">
-            <button
-              onClick={registerPasskey}
-              disabled={authStatus === 'authenticating'}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
-            >
-              Register Passkey
-            </button>
-            <button
-              onClick={verifyPasskey}
-              disabled={authStatus === 'authenticating'}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
-            >
-              Verify with Passkey
-            </button>
-          </div>
-          {authStatus === 'authenticated' && (
-            <div className="text-center text-green-600 text-sm">
-              Your identity is verified with passkey
-            </div>
-          )}
-          {authStatus === 'failed' && (
-            <div className="text-center text-red-600 text-sm">
-              Verification failed. Please try again.
-            </div>
-          )}
-        </>
-      )}
-
-    </div>
+      <div className="flex flex-col items-center space-y-4">
+        {user && (
+            <>
+              <div className="flex flex-col items-center space-y-2">
+                <button
+                    onClick={registerPasskey}
+                    disabled={authStatus === 'authenticating'}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                >
+                  Register Passkey
+                </button>
+                <button
+                    onClick={verifyPasskey}
+                    disabled={authStatus === 'authenticating'}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
+                >
+                  Verify with Passkey
+                </button>
+              </div>
+              {authStatus === 'authenticated' && (
+                  <div className="text-center text-green-600 text-sm">
+                    Your identity is verified with passkey
+                  </div>
+              )}
+              {authStatus === 'failed' && (
+                  <div className="text-center text-red-600 text-sm">
+                    Verification failed. Please try again.
+                  </div>
+              )}
+            </>
+        )}
+      </div>
   );
 }
