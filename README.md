@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PrizeClaim DApp
 
-## Getting Started
+A fully functional decentralized prize claiming application built for the Stellar Hackathon.
+The platform allows users to connect their wallets, verify their identity using Passkeys (fingerprint/FaceID), and participate in blockchain-backed prize claims through a gamified prize wheel.
 
-First, run the development server:
+---
 
+## 💻 Tech Stack
+
+**Programming Languages:**
+- TypeScript
+- JavaScript (ES6+)
+
+**Frontend Frameworks & Libraries:**
+- Next.js (React 18 with App Router)
+- Tailwind CSS for styling
+- Framer Motion for animations
+- React Hot Toast for notifications
+
+**Web Authentication:**
+- WebAuthn API for Passkey (Fingerprint/FaceID) support
+
+**Blockchain Integration:**
+- Stellar SDK for wallet interactions and prize transactions
+
+---
+
+## 📦 Dependencies
+
+**dependencies**:
+- next: 13.x
+- react: 18.x
+- react-dom: 18.x
+- tailwindcss: ^3.x
+- framer-motion: ^10.x
+- react-hot-toast: ^2.x
+- @stellar-sdk: ^10.x
+
+---
+
+## ⚙️ Setup Instructions
+
+1. Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-org/prize-claim-dapp.git
+cd prize-claim-dapp
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the Development Server
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Visit [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+5. Optional:  
+If using Passkey (WebAuthn) on Chrome or Safari, ensure you’re using localhost with HTTPS or a trusted domain.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Wallet Connection**: Simulated wallet connection with local wallet storage. Future-ready for real Stellar wallet integration.
+- **Passkey Authentication**: Register and verify users via fingerprint or FaceID. Stores verified wallet addresses for future sessions.
+- **Prize Wheel Game**: Interactive, animated prize wheel with blockchain-backed prizes. Token and NFT rewards sent via Stellar blockchain.
+- **Transaction Logging**: Recent prize transactions displayed to the user. Activity log for transparency.
+- **User Dashboard**: Displays wallet address, token balance, and claimed NFTs.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎮 Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Connect your simulated wallet by pressing “Connect Wallet”.
+2. Register your identity using “Passkey Authentication” (Fingerprint/FaceID).
+3. Spin the “Prize Wheel” to win tokens or NFTs.
+4. View your claimed prizes and recent transactions in your profile.
+
+---
+
+## 🗂️ Project Structure
+
+```
+/components
+  ├── WalletConnector.tsx
+  ├── PasskeyAuth.tsx
+  ├── PrizeWheel.tsx
+  └── GameCard.tsx
+
+/context
+  └── AppContext.tsx
+
+/pages
+  └── index.tsx
+
+/utils
+  ├── localStorage.ts
+  ├── stellarService.ts
+  └── aptos.ts
+
+/public
+  ├── images
+  └── styles
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to improve the PrizeClaim DApp.  
+Please fork the repository, make your changes, and submit a pull request.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
+
+---
+
+## 📝 Contact
+
+For any questions or feedback, please contact the development team via GitHub Issues or Discussions.
+@harwinderjitsingh @mankirat14
