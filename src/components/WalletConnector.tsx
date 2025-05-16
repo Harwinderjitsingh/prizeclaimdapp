@@ -70,8 +70,8 @@ export default function WalletConnector() {
 
         {connected && address && (
             <div className="text-center">
-              <p className="text-sm font-medium text-gray-300">Connected as:</p>
-              <p className="text-xs font-mono bg-gray-100 p-2 rounded mt-1 dark:bg-gray-700 text-gray-300">
+              <p className="text-sm font-medium text-white">Connected as:</p>
+              <p className="text-xs font-mono bg-gray-800 p-2 rounded mt-1 text-white">
                 {address.substring(0, 6)}...{address.substring(address.length - 4)}
               </p>
             </div>
@@ -80,7 +80,7 @@ export default function WalletConnector() {
       {/* Saved Wallets List */}
       {localStorage.getItem('storedWalletAddresses') && (
         <div className="w-full mt-4 text-center">
-          <h3 className="text-md font-semibold mb-2">Saved Wallets</h3>
+          <h3 className="text-md font-semibold mb-2 text-white">Saved Wallets</h3>
           <div className="flex flex-col items-center space-y-2">
             {JSON.parse(localStorage.getItem('storedWalletAddresses') || '[]').map((savedAddr: string, index: number) => (
               <button
@@ -90,7 +90,7 @@ export default function WalletConnector() {
                   setConnected(true);
                   login(savedAddr);
                 }}
-                className="text-xs font-mono bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-300 px-2 py-1 rounded"
+                className="text-xs font-mono bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded"
               >
                 {savedAddr.substring(0, 6)}...{savedAddr.substring(savedAddr.length - 4)}
               </button>
