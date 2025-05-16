@@ -92,9 +92,13 @@ export default function Home() {
                 </div>
               )}
               <div className="text-sm mt-2">
-                <p>Status:</p>
-                <p>Wallet: {user ? '✅ Connected' : '❌ Not Connected'}</p>
-                <p>Passkey: {isVerifiedWithPasskey ? '✅ Verified' : '❌ Not Verified'}</p>
+                <p className="text-gray-300 dark:text-gray-400">Status:</p>
+                <p className={user ? 'text-green-500' : 'text-red-500'}>
+                  Wallet: {user ? '✅ Connected' : '❌ Not Connected'}
+                </p>
+                <p className={isVerifiedWithPasskey ? 'text-green-500' : 'text-red-500'}>
+                  Passkey: {isVerifiedWithPasskey ? '✅ Verified' : '❌ Not Verified'}
+                </p>
               </div>
             </div>
 

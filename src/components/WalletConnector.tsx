@@ -70,8 +70,8 @@ export default function WalletConnector() {
 
         {connected && address && (
             <div className="text-center">
-              <p className="text-sm font-medium">Connected as:</p>
-              <p className="text-xs font-mono bg-gray-100 p-2 rounded mt-1 dark:bg-gray-700 dark:text-white">
+              <p className="text-sm font-medium text-gray-300">Connected as:</p>
+              <p className="text-xs font-mono bg-gray-100 p-2 rounded mt-1 dark:bg-gray-700 text-gray-300">
                 {address.substring(0, 6)}...{address.substring(address.length - 4)}
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function WalletConnector() {
                   setConnected(true);
                   login(savedAddr);
                 }}
-                className="text-xs font-mono bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-2 py-1 rounded"
+                className="text-xs font-mono bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-300 px-2 py-1 rounded"
               >
                 {savedAddr.substring(0, 6)}...{savedAddr.substring(savedAddr.length - 4)}
               </button>
