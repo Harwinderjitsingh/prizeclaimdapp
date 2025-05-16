@@ -7,26 +7,65 @@ export default function PasskeyAuth() {
   const [authStatus, setAuthStatus] = useState<'idle' | 'authenticating' | 'authenticated' | 'failed'>('idle');
   const { user, isVerifiedWithPasskey, setIsVerifiedWithPasskey } = useAppContext();
 
-  // Simulate passkey registration and authentication
-  const simulateAuthentication = async () => {
+  // Handles Passkey Registration
+  const registerPasskey = async () => {
     if (!user) {
       alert("Please connect your wallet first");
       return;
     }
 
-    setAuthStatus('authenticating');
+    try {
+      const publicKeyCredentialCreationOptions = {
+        challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
+        rp: { name: "PrizeClaim DApp" },
+        user: {
+          id: Uint8Array.from(user.username, c => c.charCodeAt(0)),
+          name: user.username,
+          displayName: user.username,
+        },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+      };
 
-    // Simulate passkey authentication
-    await new Promise(resolve => setTimeout(resolve, 1500));
+      const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+      if (credential) {
+        setAuthStatus('authenticated');
+        setIsVerifiedWithPasskey(true);
+        localStorage.setItem('passkeyAuthenticated', 'true');
+        localStorage.setItem('passkeyCredentialId', (credential as PublicKeyCredential).id);
+      }
+    } catch (error) {
+      console.error(error);
+      setAuthStatus('failed');
+      setIsVerifiedWithPasskey(false);
+    }
+  };
 
-    // Simulate 90% success rate
-    const success = Math.random() < 0.9;
+  // Handles Passkey Verification
+  const verifyPasskey = async () => {
+    if (!user) {
+      alert("Please connect your wallet first");
+      return;
+    }
 
-    if (success) {
-      setAuthStatus('authenticated');
-      setIsVerifiedWithPasskey(true);
-      localStorage.setItem('passkeyAuthenticated', 'true');
-    } else {
+    try {
+      const credentialId = localStorage.getItem('passkeyCredentialId');
+      if (!credentialId) {
+        alert("No registered passkey found. Please register first.");
+        return;
+      }
+
+      const publicKeyCredentialRequestOptions = {
+        challenge: Uint8Array.from('random-challenge-string', c => c.charCodeAt(0)),
+        allowCredentials: [{ id: Uint8Array.from(credentialId, c => c.charCodeAt(0)), type: "public-key" }],
+      };
+
+      const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+      if (assertion) {
+        setAuthStatus('authenticated');
+        setIsVerifiedWithPasskey(true);
+      }
+    } catch (error) {
+      console.error(error);
       setAuthStatus('failed');
       setIsVerifiedWithPasskey(false);
     }
@@ -45,30 +84,27 @@ export default function PasskeyAuth() {
     <div className="flex flex-col items-center space-y-4">
       {user && (
         <>
-          <button
-            onClick={simulateAuthentication}
-            disabled={authStatus === 'authenticating' || authStatus === 'authenticated'}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              authStatus === 'authenticated'
-                ? 'bg-green-500 text-white cursor-default'
-                : authStatus === 'authenticating'
-                ? 'bg-yellow-500 text-white cursor-wait'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            {authStatus === 'authenticated'
-              ? '✓ Passkey Verified'
-              : authStatus === 'authenticating'
-              ? 'Verifying...'
-              : 'Verify with Passkey'}
-          </button>
-          
+          <div className="flex flex-col items-center space-y-2">
+            <button
+              onClick={registerPasskey}
+              disabled={authStatus === 'authenticating'}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+            >
+              Register Passkey
+            </button>
+            <button
+              onClick={verifyPasskey}
+              disabled={authStatus === 'authenticating'}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
+            >
+              Verify with Passkey
+            </button>
+          </div>
           {authStatus === 'authenticated' && (
             <div className="text-center text-green-600 text-sm">
               Your identity is verified with passkey
             </div>
           )}
-          
           {authStatus === 'failed' && (
             <div className="text-center text-red-600 text-sm">
               Verification failed. Please try again.
@@ -76,7 +112,6 @@ export default function PasskeyAuth() {
           )}
         </>
       )}
-      
       {!user && (
         <div className="text-center text-gray-500 text-sm">
           Connect your wallet to use passkey authentication
