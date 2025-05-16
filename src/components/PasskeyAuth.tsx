@@ -5,7 +5,7 @@ import { useAppContext } from '@/context/AppContext';
 
 export default function PasskeyAuth() {
   const [authStatus, setAuthStatus] = useState<'idle' | 'authenticating' | 'authenticated' | 'failed'>('idle');
-  const { user } = useAppContext();
+  const { user, isVerifiedWithPasskey, setIsVerifiedWithPasskey } = useAppContext();
 
   // Simulate passkey registration and authentication
   const simulateAuthentication = async () => {
@@ -13,28 +13,31 @@ export default function PasskeyAuth() {
       alert("Please connect your wallet first");
       return;
     }
-    
+
     setAuthStatus('authenticating');
-    
+
     // Simulate passkey authentication
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     // Simulate 90% success rate
     const success = Math.random() < 0.9;
-    
+
     if (success) {
       setAuthStatus('authenticated');
+      setIsVerifiedWithPasskey(true);
       localStorage.setItem('passkeyAuthenticated', 'true');
     } else {
       setAuthStatus('failed');
+      setIsVerifiedWithPasskey(false);
     }
   };
 
   // Load authentication status from localStorage
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('passkeyAuthenticated') === 'true';
-    if (isAuthenticated && user) {
-      setAuthStatus('authenticated');
+    if (user) {
+      setAuthStatus(isAuthenticated ? 'authenticated' : 'idle');
+      setIsVerifiedWithPasskey(isAuthenticated);
     }
   }, [user]);
 

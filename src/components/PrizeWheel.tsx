@@ -22,7 +22,7 @@ const prizes = [
 const totalProbability = prizes.slice(0, -1).reduce((sum, prize) => sum + prize.probability, 0);
 prizes[prizes.length - 1].probability = Math.max(0, 1 - totalProbability);
 
-export default function PrizeWheel() {
+export default function PrizeWheel({ onPrizeWin }: { onPrizeWin?: (walletAddress: string) => void }) {
   const { user, spinCount, decrementSpinCount, addTokens, claimPrize } = useAppContext();
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -30,19 +30,19 @@ export default function PrizeWheel() {
   const [showResult, setShowResult] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const wheelRef = useRef<HTMLDivElement>(null);
-  
+
   // Spin the wheel
   const spinWheel = () => {
     if (!user || spinning || spinCount <= 0) return;
-    
+
     setSpinning(true);
     decrementSpinCount();
-    
+
     // Calculate the winning prize based on probabilities
     const randomValue = Math.random();
     let cumulativeProbability = 0;
     let winningPrize = prizes[prizes.length - 1]; // Default to "Try Again"
-    
+
     for (const prize of prizes) {
       cumulativeProbability += prize.probability;
       if (randomValue <= cumulativeProbability) {
@@ -50,32 +50,32 @@ export default function PrizeWheel() {
         break;
       }
     }
-    
+
     // Calculate target rotation to land on the winning prize
     // Each prize takes up 360/prizes.length degrees of the wheel
     const prizeIndex = prizes.findIndex(p => p.id === winningPrize.id);
     const prizeAngle = (360 / prizes.length);
     const targetRotation = 1800 + (prizeIndex * prizeAngle);
-    
+
     // Set the final rotation (adding a random offset within the prize's slice)
     const randomOffset = Math.random() * (prizeAngle * 0.8);
     const finalRotation = rotation + targetRotation + randomOffset;
-    
+
     setRotation(finalRotation);
-    
+
     // After animation completes
     setTimeout(() => {
       setSpinning(false);
       setWonPrize(winningPrize);
       setShowResult(true);
-      
+
       // Process prize
       if (winningPrize.id !== 'nothing') {
         processPrize(winningPrize);
       }
     }, 5000);
   };
-  
+
   // Process the prize won by the user
   const processPrize = (prize: any) => {
     // Handle token prizes
@@ -83,29 +83,40 @@ export default function PrizeWheel() {
       const amount = parseInt(prize.id.replace('token', ''), 10);
       addTokens(amount);
       toast.success(`You won ${amount} tokens!`);
-    } 
+      if (onPrizeWin && user) {
+        onPrizeWin(user.walletAddress);
+      }
+    }
     // Handle NFT prizes
     else if (prize.id.startsWith('nft')) {
       claimPrize(prize.id);
-      
-      // Generate mock transaction data
+
       if (user) {
         const txData = generateMockTxData(prize.id, user.walletAddress);
         setTransactions(prev => [txData, ...prev]);
         toast.success(`You won a ${prize.name}!`);
+        if (onPrizeWin) {
+          onPrizeWin(user.walletAddress);
+        }
       }
     }
     // Handle jackpot
     else if (prize.id === 'jackpot') {
       addTokens(100);
       claimPrize('jackpot');
-      
-      // Generate mock transaction data
+
       if (user) {
         const txData = generateMockTxData('jackpot', user.walletAddress);
         setTransactions(prev => [txData, ...prev]);
         toast.success('🎉 JACKPOT! You won 100 tokens!');
+        if (onPrizeWin) {
+          onPrizeWin(user.walletAddress);
+        }
       }
+    }
+    // No prize won
+    else if (onPrizeWin && user) {
+      onPrizeWin(user.walletAddress);
     }
   };
   

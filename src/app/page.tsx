@@ -7,17 +7,35 @@ import PrizeWheel from '@/components/PrizeWheel';
 import GameCard from '@/components/GameCard';
 import { useAppContext } from '@/context/AppContext';
 import { checkAndResetSpins } from '@/utils/localStorage';
-import { sendPrizeTransaction } from '@/lib/stellarService'; // Corrected import
+import { sendPrizeTransaction } from '@/lib/stellarService';
+import { Input } from '@/components/ui/Input';
 
 export default function Home() {
   const { user, spinCount } = useAppContext();
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [showGameCards, setShowGameCards] = useState(true);
-  const [recentTransaction, setRecentTransaction] = useState<{ amount: string; hash: string } | null>(null);
+  const [transactionHistory, setTransactionHistory] = useState<{ amount: string; hash: string; timestamp: string }[]>([]);
+  const [recipientAddress, setRecipientAddress] = useState("");
 
   useEffect(() => {
     checkAndResetSpins();
   }, []);
+
+  const handleSendPrize = async () => {
+    if (!recipientAddress.trim()) {
+      alert("Wallet address is required.");
+      return;
+    }
+    try {
+      const txHash = await sendPrizeTransaction(recipientAddress.trim(), "10");
+      const newTransaction = { amount: "10", hash: txHash, timestamp: new Date().toLocaleString() };
+      setTransactionHistory((prev) => [...prev, newTransaction]);
+      alert("Prize sent successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to send prize");
+    }
+  };
 
   const games = [
     {
@@ -33,6 +51,9 @@ export default function Home() {
   return (
       <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
         <div className="max-w-4xl w-full">
+          <div className="mb-8 text-center">
+            <PasskeyAuth />
+          </div>
           <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
               Prize Claim With Wallet
@@ -56,7 +77,6 @@ export default function Home() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Add an extra layer of security with passkey verification.
               </p>
-              <PasskeyAuth />
             </div>
           </div>
 
@@ -75,6 +95,10 @@ export default function Home() {
                   <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
                     <p className="text-sm text-gray-600 dark:text-gray-400">NFTs Claimed</p>
                     <p className="text-lg font-semibold">{user.claimedPrizes.length}</p>
+                  </div>
+                  <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg col-span-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Wallet Address</p>
+                    <p className="text-lg font-semibold break-all">{user.walletAddress}</p>
                   </div>
                 </div>
               </div>
@@ -121,28 +145,32 @@ export default function Home() {
           </div>
 
           <div className="mt-8 text-center">
+            <Input
+              type="text"
+              placeholder="Enter the Stellar wallet address"
+              value={recipientAddress}
+              onChange={(e) => setRecipientAddress(e.target.value)}
+              className="mb-4"
+            />
             <button
-                onClick={async () => {
-                  try {
-                    const recipientPublicKey = "GAVNELVFD4ZY2QGGWBTXG2MFWRKRIN2YFYXCPIRX4DUFME7RJDSQKHBC";
-                    const txHash = await sendPrizeTransaction(recipientPublicKey, "10");
-                    setRecentTransaction({ amount: "10", hash: txHash });
-                  } catch (error) {
-                    console.error(error);
-                    alert("Failed to send prize");
-                  }
-                }}
+                onClick={handleSendPrize}
                 className="bg-green-600 px-4 py-2 text-white rounded"
             >
               Send Test Prize
             </button>
           </div>
 
-          {recentTransaction && (
+          {transactionHistory.length > 0 && (
             <div className="mt-8 text-center">
-              <h2 className="text-lg font-semibold mb-2">Recent Transaction</h2>
-              <p>Amount: {recentTransaction.amount} XLM</p>
-              <p>Transaction Hash: {recentTransaction.hash}</p>
+              <h2 className="text-lg font-semibold mb-2">Transaction History</h2>
+              {transactionHistory.map((tx, index) => (
+                <div key={index} className="mb-4">
+                  <p>Amount: {tx.amount} XLM</p>
+                  <p>Transaction Hash: {tx.hash}</p>
+                  <p>Timestamp: {tx.timestamp}</p>
+                  <hr className="my-2" />
+                </div>
+              ))}
             </div>
           )}
 
@@ -153,4 +181,5 @@ export default function Home() {
         </div>
       </main>
   );
+
 }

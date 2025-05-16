@@ -20,6 +20,8 @@ interface AppContextType {
   spinCount: number;
   decrementSpinCount: () => void;
   resetSpinCount: () => void;
+  isVerifiedWithPasskey: boolean;
+  setIsVerifiedWithPasskey: (verified: boolean) => void;
 }
 
 // Create the context with default values
@@ -32,6 +34,8 @@ const AppContext = createContext<AppContextType>({
   spinCount: 3, // Default daily spins
   decrementSpinCount: () => {},
   resetSpinCount: () => {},
+  isVerifiedWithPasskey: false,
+  setIsVerifiedWithPasskey: () => {},
 });
 
 // Custom hook to use the AppContext
@@ -41,16 +45,17 @@ export const useAppContext = () => useContext(AppContext);
 export function AppContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [spinCount, setSpinCount] = useState<number>(3);
+  const [isVerifiedWithPasskey, setIsVerifiedWithPasskey] = useState(false);
 
   // Load user data from localStorage on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem('prizeDappUser');
     const storedSpinCount = localStorage.getItem('prizeDappSpinCount');
-    
+
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    
+
     if (storedSpinCount) {
       setSpinCount(parseInt(storedSpinCount, 10));
     }
@@ -126,6 +131,8 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
       spinCount,
       decrementSpinCount,
       resetSpinCount,
+      isVerifiedWithPasskey,
+      setIsVerifiedWithPasskey,
     }}>
       {children}
     </AppContext.Provider>
